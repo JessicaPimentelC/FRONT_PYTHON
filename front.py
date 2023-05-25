@@ -21,10 +21,15 @@ def index():
                     row.append(0)
                 else:
                     print("holaAAA")
-                    distance = float(request.form.get([f'distance_{i}_{j}']))
-                    print("distance")
+                    distance = request.form.get(f'distance_{i}_{j}')
+                    if distance is not None:
+                        print("if")
+                        distance = float(distance)
+                    else:
+                        distance = 0.0  # Valor predeterminado cuando el campo está vacío
                     row.append(distance)
             distances.append(row)
+            print(distances)
         
         return 'Distancias almacenadas correctamente.'
     
