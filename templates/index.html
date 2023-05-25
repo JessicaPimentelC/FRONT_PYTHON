@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interfaz para ingresar distancias</title>
+</head>
+<body>
+    <h1>Ingrese las distancias entre los equipos:</h1>
+    <form method="POST" action="/">
+
+        <label>Número de equipos:</label>
+        <input type="number" name="num_teams" min="2" max="10"><br><br>
+
+        {% if num_teams %}
+            {% for i in range(num_teams) %}
+                {% for j in range(num_teams) %}
+                    {% if i != j %}
+                        <label>Equipo {{ i+1 }} - Equipo {{ j+1 }}:</label>
+                        <input type="text" name="distance_{{i}}_{{j}}"><br>
+                    {% endif %}
+                {% endfor %}
+            {% endfor %}
+        {% endif %}
+        
+        <input type="submit" value="Enviar">
+    </form>
+</body>
