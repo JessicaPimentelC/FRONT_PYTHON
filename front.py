@@ -20,8 +20,8 @@ def index():
                 if i == j:
                     row.append(0)
                 else:
-                    print("hola")
-                    distance = float(request.form[f'distance_{i}_{j}'])
+                    print("holaAAA")
+                    distance = float(request.form.get([f'distance_{i}_{j}']))
                     print("distance")
                     row.append(distance)
             distances.append(row)
