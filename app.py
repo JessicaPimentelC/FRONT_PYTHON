@@ -4,7 +4,8 @@ from wtforms import FloatField, IntegerField
 from wtforms.validators import DataRequired
 from wtforms_alchemy import model_form_factory
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
+
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 BaseModelForm = model_form_factory(FlaskForm)
@@ -26,6 +27,7 @@ def index():
 
         DistanceForm.Meta.model = Distance
         for i in range(num_teams):
+            
             field_name = f'distance_{i}'
             field = FloatField(f'Distancia {i}', validators=[DataRequired()])
             setattr(DistanceForm, field_name, field)
@@ -38,15 +40,14 @@ def index():
                 row = []
                 for j in range(num_teams):
                     if i == j:
-                        print("holaaa")
                         row.append(0)
                     else:
-                        field_name = f'distance_{i}'
-                        print("holaaa1")
-                        print(field_name)
+                        field_name = f'distance_{i}_{j}'
                         distance = getattr(form, field_name).data
                         row.append(float(distance))
+                        #print(row)
                 distances.append(row)
+                print(distances)
 
             return 'Distancias almacenadas correctamente.'
 
