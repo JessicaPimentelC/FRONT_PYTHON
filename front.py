@@ -1,32 +1,56 @@
 from flask import Flask, render_template, request
+from flask_wtf import FlaskForm
+from wtforms import FloatField, IntegerField
+from wtforms.validators import DataRequired
+from wtforms_alchemy import model_form_factory
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
 
-#n_equipos = 0
-#distances = [[0] * n_equipos for _ in range(n_equipos)]  # Arreglo bidimensional para almacenar las distancias
+BaseModelForm = model_form_factory(FlaskForm)
+
+class DistanceForm(BaseModelForm):
+    num_teams = IntegerField('Número de equipos', validators=[DataRequired()])
+
+    class Meta:
+        model = None  # Se establecerá dinámicamente más adelante
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    if request.method == 'POST':
-        num_teams = int(request.form['num_teams'])
-        distances = []
+    form = DistanceForm(request.form)
+
+    if request.method == 'POST' and form.validate():
+        num_teams = form.num_teams.data
+        class Distance:
+            pass
+
+        DistanceForm.Meta.model = Distance
         for i in range(num_teams):
-            row = []
-            for j in range(num_teams):
-                if i == j:
-                    row.append(0)
-                else:
-                    distance = request.form.get(f'distance_{i}_{j}')
-                    if distance:
-                        row.append(float(distance))
+            field_name = f'distance_{i}'
+            field = FloatField(f'Distancia {i}', validators=[DataRequired()])
+            setattr(DistanceForm, field_name, field)
+
+        form = DistanceForm(request.form)
+
+        if form.validate_on_submit():
+            distances = []
+            for i in range(num_teams):
+                row = []
+                for j in range(num_teams):
+                    if i == j:
+                        print("holaaa")
+                        row.append(0)
                     else:
-                        row.append(0.0)
-            distances.append(row)
+                        field_name = f'distance_{i}'
+                        print("holaaa1")
+                        print(field_name)
+                        distance = getattr(form, field_name).data
+                        row.append(float(distance))
+                distances.append(row)
 
-        return 'Distancias almacenadas correctamente.'
+            return 'Distancias almacenadas correctamente.'
 
-    return render_template('index.html', num_teams=2) 
-
+    return render_template('index.html', form=form)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
