@@ -24,12 +24,15 @@ def index():
         num_teams = form.num_teams.data
         class Distance:
             pass
-
+        n = 0
         DistanceForm.Meta.model = Distance
-        for i in range(num_teams):
+        for k in range(num_teams):
+            n += k
+        
+        for i in range(n):
             
             field_name = f'distance_{i}'
-            field = FloatField(f'Distancia {i}', validators=[DataRequired()])
+            field = FloatField(f'Distancia {i+1}', validators=[DataRequired()])
             setattr(DistanceForm, field_name, field)
 
         form = DistanceForm(request.form)
