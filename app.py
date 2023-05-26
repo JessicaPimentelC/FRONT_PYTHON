@@ -39,18 +39,19 @@ def index():
 
         if form.validate_on_submit():
             distances = []
-            for i in range(num_teams):
+            for i in range(n):#n=6 para 4 equipos
                 row = []
-                for j in range(num_teams):
-                    if i == j:
-                        row.append(0)
-                    else:
-                        field_name = f'distance_{i}_{j}'
-                        distance = getattr(form, field_name).data
-                        row.append(float(distance))
-                        #print(row)
+                if i == 0:
+                    row.append(0)
+                else:
+                    field_name = f'distance_{i}'
+                    distance = form.data[field_name]
+                    print("distance",distance)
+                    row.append(distance)
+                    
                 distances.append(row)
-                print(distances)
+                print("row",row)
+                print("distances:",distances)
 
             return 'Distancias almacenadas correctamente.'
 
