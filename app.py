@@ -14,11 +14,11 @@ class DistanceForm(BaseModelForm):
     num_teams = IntegerField('Número de equipos', validators=[DataRequired()])
     maximo = IntegerField('Valor Maximo')
     minimo = IntegerField('Valor Minimo')
-   # resultado1 = TextAreaField('Calendario') 
-    
+   # resultado1 = TextAreaField('Calendario')
+
     class Meta:
         model = None  #Se establecerá dinámicamente más adelante
-            
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = DistanceForm(request.form)
@@ -27,28 +27,27 @@ def index():
         num_teams = form.num_teams.data
         maximo = form.maximo.data
         minimo = form.minimo.data
-        
+
         class Distance:
             pass
         n = 0
         DistanceForm.Meta.model = Distance
         for k in range(num_teams):
             n += k
-            
+
         for i in range(n):
             field_name = f'distance_{i+1}'
             field = IntegerField(f'Distancia {i+1} ', validators=[DataRequired()])
             setattr(DistanceForm, field_name, field)
-            
+
         form = DistanceForm(request.form)
         filasDist = []
+        filasEntra = []
         n_e = []
         max = []
         min = []
-        filasEntra = []
-        matriz = []
         if form.validate_on_submit():
-            
+
             entrada = []
             for i in range(n):#ej: n_campos=6 para 4 equipos
                 row = []
@@ -60,20 +59,21 @@ def index():
                 row.append(distance)
 
                 entrada.append(row.pop(0))
-                
+
             #datos de entrada, distancias entre equipos
             for i in range(n):
                 filasDist.append(entrada[i])
-            
-            #datos de entrada, num equipos, maximo y minimo    
+
             n_e.append(num_teams)
             max.append(maximo)
             min.append(minimo)
+
             
+            #datos de entrada, num equipos, maximo y minimo
             filasEntra.append(n_e)
             filasEntra.append(max)
             filasEntra.append(min)
-            
+
             matrix = []
 
             for i in range(num_teams):
@@ -87,12 +87,11 @@ def index():
                         r.append(matrix[j][i])
                     #print(r)
                 matrix.append(r)
-                
+
             print(filasEntra,matrix)
-            
 
             return 'Distancias almacenadas correctamente.'
-        
+
     return render_template('index.html', form=form)
 
 if __name__ == '__main__':
