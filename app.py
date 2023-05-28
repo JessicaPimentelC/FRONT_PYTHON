@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from flask_wtf import FlaskForm
-from wtforms import FloatField, IntegerField
+from wtforms import FloatField, IntegerField,TextAreaField
 from wtforms.validators import DataRequired
 from wtforms_alchemy import model_form_factory
 
@@ -14,10 +14,11 @@ class DistanceForm(BaseModelForm):
     num_teams = IntegerField('Número de equipos', validators=[DataRequired()])
     maximo = IntegerField('Valor Maximo')
     minimo = IntegerField('Valor Minimo')
-
+   # resultado1 = TextAreaField('Calendario') 
+    
     class Meta:
-        model = None  # Se establecerá dinámicamente más adelante
-
+        model = None  #Se establecerá dinámicamente más adelante
+            
 @app.route('/', methods=['GET', 'POST'])
 def index():
     form = DistanceForm(request.form)
@@ -33,17 +34,18 @@ def index():
         DistanceForm.Meta.model = Distance
         for k in range(num_teams):
             n += k
-        
+            
         for i in range(n):
             field_name = f'distance_{i+1}'
-            field = IntegerField(f'Distancia {i+1}', validators=[DataRequired()])
+            field = IntegerField(f'Distancia {i+1} ', validators=[DataRequired()])
             setattr(DistanceForm, field_name, field)
-
+            
         form = DistanceForm(request.form)
         filasDist = []
         filasEntra = []
         matriz = []
         if form.validate_on_submit():
+            
             entrada = []
             for i in range(n):#ej: n_campos=6 para 4 equipos
                 row = []
@@ -65,26 +67,8 @@ def index():
             filasEntra.append(maximo)
             filasEntra.append(minimo)
             
-            matrix = []
+            print("filas:",filasDist)
 
-            for i in range(num_teams):
-                r = []
-                for j in range(num_teams):
-                    if i == j:
-                        r.append(0)
-                    elif i < j:
-                        r.append(filasDist.pop(0))
-                    else:
-                        r.append(matrix[j][i])
-                matrix.append(r)
-
-            result = '[' + ']['.join([' '.join(map(str, row)) for row in matrix]) + ']'
-            result = result.replace('[', '[').replace(']', ']')
-
-            print(result)
-
-
-            
             return 'Distancias almacenadas correctamente.'
         
     return render_template('index.html', form=form)
