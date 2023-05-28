@@ -42,6 +42,9 @@ def index():
             
         form = DistanceForm(request.form)
         filasDist = []
+        n_e = []
+        max = []
+        min = []
         filasEntra = []
         matriz = []
         if form.validate_on_submit():
@@ -49,25 +52,44 @@ def index():
             entrada = []
             for i in range(n):#ej: n_campos=6 para 4 equipos
                 row = []
-                if i == 0:
-                    row.append(0)
-                else:                    
-                    field_name = f'distance_{i}'
-                    distance = form.data[field_name]
-                    row.append(distance) 
-            
-                entrada.append(row)              
-            
+            #    if i == 0:
+            #        row.append(0)
+            #    else:
+                field_name = f'distance_{i+1}'
+                distance = form.data[field_name]
+                row.append(distance)
+
+                entrada.append(row.pop(0))
+                
             #datos de entrada, distancias entre equipos
             for i in range(n):
-                filasDist.append(entrada[i][0])
+                filasDist.append(entrada[i])
             
             #datos de entrada, num equipos, maximo y minimo    
-            filasEntra.append(num_teams)
-            filasEntra.append(maximo)
-            filasEntra.append(minimo)
+            n_e.append(num_teams)
+            max.append(maximo)
+            min.append(minimo)
             
-            print("filas:",filasDist)
+            filasEntra.append(n_e)
+            filasEntra.append(max)
+            filasEntra.append(min)
+            
+            matrix = []
+
+            for i in range(num_teams):
+                r = []
+                for j in range(num_teams):
+                    if i == j:
+                        r.append(0)
+                    elif i < j:
+                        r.append(filasDist.pop(0))
+                    else:
+                        r.append(matrix[j][i])
+                    #print(r)
+                matrix.append(r)
+                
+            print(filasEntra,matrix)
+            
 
             return 'Distancias almacenadas correctamente.'
         
